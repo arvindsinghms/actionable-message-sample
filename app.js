@@ -115,10 +115,6 @@ const formattedDate = dateObj => {
 
 const getUnclassifiedDrive = data => {
   const { startedAt, endedAt, googleDistance } = data;
-  console.log('startedAt');
-  console.log('endedAt');
-  console.log(startedAt);
-  console.log(endedAt);
   const startedAtStr = `${startedAt.iso}`;
   const endedAtStr = `${endedAt.iso}`;
   const formattedStartedAt = `${formattedDate(startedAtStr)}`;
@@ -177,6 +173,11 @@ const getUnclassifiedDrive = data => {
 };
 
 const getClassifiedDrive = data => {
+  const { googleDistance } = data;
+
+  let distance = parseFloat(googleDistance);
+  distance = distance.toFixed(2);
+
   return `{
 		"type": "ColumnSet",
 		"spacing": "Large",
@@ -195,14 +196,14 @@ const getClassifiedDrive = data => {
 					{
 						"type": "TextBlock",
 						"spacing": "None",
-						"text": "${data.googleDistance} Miles, $${data.value}",
+						"text": "${distance} Miles, $${data.value}",
 						"isSubtle": true,
 						"width": "auto"
 					},
 					{
 						"type": "TextBlock",
 						"spacing": "None",
-						"text": "Business",
+						"text": "${data.state == 1 ? 'Business' : 'Personal'}",
 						"color": "good",
 						"isSubtle": true,
 						"width": "auto"
@@ -385,34 +386,33 @@ app.use('/send-mail', function(req, res) {
         const markupData = data.map(el => {
           if (el.state == 0) {
             return getUnclassifiedDrive(el);
+          } else if (el.state == 1 || el.state == 2) {
+            return getClassifiedDrive(el);
           }
           return '';
         });
 
         const resData = `${startMarkUp}${seperator}${markupData.join()}${endMarkUp}`;
 
-        console.log(resData);
-
-        // nodeoutlook.sendEmail({
-        //   auth: {
-        //     user: 'admin@M365x663572.onmicrosoft.com',
-        //     pass: 'MileIQ@Demo2019'
-        //   },
-        //   from: 'admin@M365x663572.onmicrosoft.com',
-        //   to: 'admin@M365x663572.onmicrosoft.com',
-        //   subject: 'Hey, Classify your drives!',
-        //   //   html: `${startMarkUp}${seperator}${unclassifiedDrive}${seperator}${classifiedDrive}${endMarkUp}`,
-        //   html: `${resData}`,
-        //   replyTo: 'admin@M365x663572.onmicrosoft.com',
-        //   onError: e => {
-        //     next(err);
-        //     console.log(e);
-        //   },
-        //   onSuccess: i => {
-        //     res.status(200).send('Email sent succesfully');
-        //     console.log(i);
-        //   }
-        // });
+        nodeoutlook.sendEmail({
+          auth: {
+            user: 'admin@M365x663572.onmicrosoft.com',
+            pass: 'MileIQ@Demo2019'
+          },
+          from: 'admin@M365x663572.onmicrosoft.com',
+          to: 'admin@M365x663572.onmicrosoft.com',
+          subject: 'Hey, Classify your drives!',
+          html: `${resData}`,
+          replyTo: 'admin@M365x663572.onmicrosoft.com',
+          onError: e => {
+            next(err);
+            console.log(e);
+          },
+          onSuccess: i => {
+            res.status(200).send('Email sent succesfully');
+            console.log(i);
+          }
+        });
         callback(null, 'done');
       }
     ],
@@ -425,49 +425,6 @@ app.use('/send-mail', function(req, res) {
     }
   );
 });
-
-const htmlData = `<html>
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <script type="application/adaptivecard+json">{
-	"type": "AdaptiveCard",
-	"padding": "none",
-    "hideOriginalBody": true,
-	"body": [
-		{
-			"type": "Container",
-			"style": "emphasis",
-			"items": [
-				{
-					"type": "ColumnSet",
-					"columns": [
-						
-						{
-							"type": "Column",
-							"items": [
-								{
-									"type": "Image",
-									"horizontalAlignment": "Right",
-									"url": "https://mdl-marketing-cdn-web.azureedge.net/web/mileiq-marketing-site-2019/logos/mileiq_circular_logo_stack-gray.png",
-									"height": "25px",
-									"altText": "MileIQ Logo"
-								}
-							],
-							"width": "auto"
-						}
-					]
-				}
-			]
-		}
-	],
-	"version": "1.0"
-}
-</script>
-</head>
-<body>
-Visit the Outlook Dev Portal to learn more about Actionable Messages.
-</body>
-</html>`;
 
 // app.use('/send-mail', function(req, res, next) {
 //   nodeoutlook.sendEmail({
