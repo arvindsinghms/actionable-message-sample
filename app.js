@@ -398,7 +398,7 @@ app.use('/send-mail', function(req, res) {
         nodeoutlook.sendEmail({
           auth: {
             user: 'admin@M365x663572.onmicrosoft.com',
-            pass: 'MileIQ@Demo2019'
+            pass: '************'
           },
           from: 'admin@M365x663572.onmicrosoft.com',
           to: 'admin@M365x663572.onmicrosoft.com',
@@ -426,30 +426,6 @@ app.use('/send-mail', function(req, res) {
     }
   );
 });
-
-// app.use('/send-mail', function(req, res, next) {
-//   nodeoutlook.sendEmail({
-//     auth: {
-//       user: 'admin@M365x073908.onmicrosoft.com',
-//       pass: 'MileIQ@Demo2019'
-//     },
-//     from: 'admin@M365x073908.onmicrosoft.com',
-//     to: 'admin@M365x073908.onmicrosoft.com',
-//     subject: 'Hey, Classify your drives!',
-//     html: `${startMarkUp}${seperator}${unclassifiedDrive}${seperator}${classifiedDrive}${endMarkUp}`,
-//     // html: `${resMarkUp}`,
-//     // html: `<b>dsdsds</b>`,
-//     replyTo: 'admin@M365x073908.onmicrosoft.com',
-//     onError: e => {
-//       next(err);
-//       console.log(e);
-//     },
-//     onSuccess: i => {
-//       res.status(200).send('Email sent succesfully');
-//       console.log(i);
-//     }
-//   });
-// });
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
