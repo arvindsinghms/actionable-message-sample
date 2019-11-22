@@ -204,7 +204,7 @@ const getClassifiedDrive = data => {
 					{
 						"type": "TextBlock",
 						"spacing": "None",
-						"text": "${data.state == 1 ? 'Business' : 'Personal'}",
+						"text": "${data.category == 2 ? 'Business' : 'Personal'}",
 						"color": "good",
 						"isSubtle": true,
 						"width": "auto"
@@ -394,7 +394,6 @@ app.use('/send-mail', function(req, res) {
         });
 
         const resData = `${startMarkUp}${seperator}${markupData.join()}${endMarkUp}`;
-        // console.log(resData);
 
         nodeoutlook.sendEmail({
           auth: {
