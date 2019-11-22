@@ -132,7 +132,7 @@ const getUnclassifiedDrive = data => {
 				"items": [
 					{
 						"type": "Input.Toggle",
-						"id": "${data.driveId}",
+						"id": "${data.objectId}",
 						"title": "",
 						"value": "false",
 						"valueOn": "true",
@@ -188,7 +188,8 @@ const getClassifiedDrive = data => {
 				"items": [
 					{
 						"type": "TextBlock",
-						"spacing": "None",
+            "spacing": "None",
+            "id": "${data.objectId}",
 						"text": "**${data.startLocName} to ${data.endLocName}**",
 						"isSubtle": true,
 						"width": "auto"
@@ -276,7 +277,7 @@ const startMarkUp = `<html>
 										{
 											"type": "TextBlock",
 											"size": "Medium",
-											"text": "**Classify 5 drives**",
+											"text": "**Classify drives**",
 											"wrap": true
 										},
 										{
@@ -393,6 +394,7 @@ app.use('/send-mail', function(req, res) {
         });
 
         const resData = `${startMarkUp}${seperator}${markupData.join()}${endMarkUp}`;
+        // console.log(resData);
 
         nodeoutlook.sendEmail({
           auth: {
